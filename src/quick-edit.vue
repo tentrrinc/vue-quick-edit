@@ -184,10 +184,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    keepOpen: {
+      type: Boolean,
+      default: true,
+    },
     formatMultiple: {
       type: Function,
       default: values => values.join(', '),
-  },
+    },
   },
   computed: {
     isEmpty() {
@@ -300,7 +304,10 @@ export default {
       this.theValue = this.inputValue;
       this.$emit(events.input, this.theValue);
       this.$emit(events.rawInput, this.inputValue);
-      this.close(doFocus);
+
+      if (!this.keepOpen) {
+        this.close(doFocus);
+      }
     },
     focus() {
       setTimeout(() => {
