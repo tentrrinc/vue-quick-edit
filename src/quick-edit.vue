@@ -192,6 +192,14 @@ export default {
       type: Function,
       default: values => values.join(', '),
     },
+    onFocus: {
+      type: Function,
+      default: null,
+    },
+    onLostFocus: {
+      type: Function,
+      default: null,
+    },
   },
   computed: {
     isEmpty() {
@@ -278,8 +286,16 @@ export default {
     handleFocus({ type }) {
       if (events.focusin === type) {
         clearTimeout(this._handleFocus);
+        if (typeof this.onFocus !== 'undefined' && this.onFocus !== null) {
+          // Send a reference to the component.
+          this.onFocus(this);
+        }
       } else {
         this._handleFocus = setTimeout(this.clickOutside, 0);
+        if (typeof this.onLostFocus !== 'undefined' && this.onLostFocus !== null) {
+          // Send a reference to the component.
+          this.onLostFocus(this);
+        }
       }
     },
     show(doFocus = true) {
