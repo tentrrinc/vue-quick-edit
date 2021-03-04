@@ -13,13 +13,17 @@
         @keypress.enter="ok"
         @keypress.escape.exact="close"
       >
-        <option v-show="$attrs.placeholder" :value="placeholderValue">{{ $attrs.placeholder }}</option>
+        <option v-show="$attrs.placeholder" :value="placeholderValue">{{
+          $attrs.placeholder
+        }}</option>
         <option
           v-for="option in displayOptions"
           :key="option.value"
           :value="option.value"
           :disabled="option.disabled"
-        >{{ option.text }}</option>
+        >
+          {{ option.text }}
+        </option>
       </select>
       <textarea
         v-else-if="types.textarea === type"
@@ -29,6 +33,7 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.ctrl.enter="ok"
         @keypress.escape.exact="close"
       ></textarea>
@@ -58,9 +63,10 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.enter="ok"
         @keypress.escape.exact="close"
-      >
+      />
       <div v-if="showButtons" :class="classNames.buttons">
         <button
           :class="classNames.buttonOk"
@@ -152,7 +158,7 @@ export default {
     options: {
       type: Array,
       default: () => [],
-      },
+    },
     mode: {
       type: String,
       default: modes.ok,
@@ -171,7 +177,7 @@ export default {
     classes: {
       type: Object,
       default: () => null,
-      },
+    },
     validator: {
       type: Function,
       default: null,
@@ -298,6 +304,12 @@ export default {
       this.$emit(events.close, this.theValue);
       doFocus && this.focus();
     },
+    autoUpdate() {
+      // Only triggers if the buttons are hidden.
+      if (!this.showButtons) {
+        this.ok();
+      }
+    },
     ok(doFocus = true) {
       if (this.validator) {
         const error = this.validator(this.inputValue);
@@ -341,7 +353,11 @@ export default {
   mounted() {
     // Checks if the defaults need to be replaced by a custom definition in runtime.
     if (typeof window.QUICKEDIT_DEFAULT_CLASSES !== 'undefined') {
-      this.defaultClasses = Object.assign({}, this.defaultClasses, window.QUICKEDIT_DEFAULT_CLASSES);
+      this.defaultClasses = Object.assign(
+        {},
+        this.defaultClasses,
+        window.QUICKEDIT_DEFAULT_CLASSES
+      );
     }
   },
 };
