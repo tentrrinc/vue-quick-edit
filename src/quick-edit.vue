@@ -13,13 +13,17 @@
         @keypress.enter="ok"
         @keypress.escape.exact="close"
       >
-        <option v-show="$attrs.placeholder" :value="placeholderValue">{{ $attrs.placeholder }}</option>
+        <option v-show="$attrs.placeholder" :value="placeholderValue">{{
+          $attrs.placeholder
+        }}</option>
         <option
           v-for="option in displayOptions"
           :key="option.value"
           :value="option.value"
           :disabled="option.disabled"
-        >{{ option.text }}</option>
+        >
+          {{ option.text }}
+        </option>
       </select>
       <textarea
         v-else-if="types.textarea === type"
@@ -29,6 +33,7 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.ctrl.enter="ok"
         @keypress.escape.exact="close"
       ></textarea>
@@ -74,6 +79,7 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.enter="ok"
         @keypress.escape.exact="close"
       />
@@ -320,6 +326,12 @@ export default {
       this.inputState = states.display;
       this.$emit(events.close, this.theValue);
       doFocus && this.focus();
+    },
+    autoUpdate() {
+      // Only triggers if the buttons are hidden.
+      if (!this.showButtons) {
+        this.ok();
+      }
     },
     ok(doFocus = true) {
       if (this.validator) {
