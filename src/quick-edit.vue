@@ -245,7 +245,9 @@ export default {
         ? Array.isArray(this.theValue)
           ? this.formatMultiple(this.theValue.map(this.getDisplayOption))
           : this.getDisplayOption(this.theValue)
-        : this.theValue;
+        : !!this.prefix
+          ? this.prefix + ' ' + this.theValue
+          : this.theValue;
     },
     displayOptions() {
       const [firstEl] = this.options;
