@@ -14,8 +14,8 @@
         @keypress.escape.exact="close"
       >
         <option v-show="$attrs.placeholder" :value="placeholderValue">{{
-          $attrs.placeholder
-        }}</option>
+            $attrs.placeholder
+          }}</option>
         <option
           v-for="option in displayOptions"
           :key="option.value"
@@ -141,6 +141,7 @@ const types = mune([
   'select',
   'textarea',
   'url',
+  'time',
 ]);
 const modes = mune(['ok', 'cancel', 'ignore']);
 
@@ -256,10 +257,16 @@ export default {
         : this.options;
     },
     displayValue() {
-      if (this.types.boolean === this.type)
+      if (this.types.boolean === this.type) {
         return this.theValue ? this.booleanYesText : this.booleanNoText;
-      else if (this.types.password === this.type) return '•'.repeat(8);
-      return this.isEmpty ? this.emptyText : this.prettyValue;
+      } else if (this.types.password === this.type) {
+        return '•'.repeat(8);
+      } else if (this.types.time === this.type) {
+        const hours = parseInt(this.value.substring(0, 2));
+        return this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}`;
+      } else {
+        return this.isEmpty ? this.emptyText : this.prettyValue;
+      }
     },
     classNames() {
       return Object.assign({}, this.defaultClasses, this.classes);
