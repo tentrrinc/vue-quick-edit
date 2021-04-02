@@ -13,13 +13,17 @@
         @keypress.enter="ok"
         @keypress.escape.exact="close"
       >
-        <option v-show="$attrs.placeholder" :value="placeholderValue">{{ $attrs.placeholder }}</option>
+        <option v-show="$attrs.placeholder" :value="placeholderValue">{{
+          $attrs.placeholder
+        }}</option>
         <option
           v-for="option in displayOptions"
           :key="option.value"
           :value="option.value"
           :disabled="option.disabled"
-        >{{ option.text }}</option>
+        >
+          {{ option.text }}
+        </option>
       </select>
       <textarea
         v-else-if="types.textarea === type"
@@ -29,6 +33,7 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.ctrl.enter="ok"
         @keypress.escape.exact="close"
       ></textarea>
@@ -46,9 +51,25 @@
             :tabindex="tabIndex"
             @keypress.enter="ok"
             @keypress.escape.exact="close"
-          >
+          />
         </label>
       </template>
+      <div v-else-if="!!prefix" :class="classNames.formGroup">
+        <div :class="classNames.inputIcon">
+          <input
+            :class="classNames.formControl"
+            :type="type"
+            v-model="inputValue"
+            v-bind="$attrs"
+            :tabindex="tabIndex"
+            @focusin="handleFocus"
+            @focusout="handleFocus"
+            @keypress.enter="ok"
+            @keypress.escape.exact="close"
+          />
+          <i>{{ prefix }}</i>
+        </div>
+      </div>
       <input
         v-else
         :class="classNames.input"
@@ -58,9 +79,10 @@
         :tabindex="tabIndex"
         @focusin="handleFocus"
         @focusout="handleFocus"
+        @keyup="autoUpdate"
         @keypress.enter="ok"
         @keypress.escape.exact="close"
-      >
+      />
       <div v-if="showButtons" :class="classNames.buttons">
         <button
           :class="classNames.buttonOk"
@@ -152,7 +174,7 @@ export default {
     options: {
       type: Array,
       default: () => [],
-      },
+    },
     mode: {
       type: String,
       default: modes.ok,
@@ -171,7 +193,7 @@ export default {
     classes: {
       type: Object,
       default: () => null,
-      },
+    },
     validator: {
       type: Function,
       default: null,
@@ -191,6 +213,10 @@ export default {
     formatMultiple: {
       type: Function,
       default: values => values.join(', '),
+    },
+    prefix: {
+      type: String,
+      default: '',
     },
   },
   computed: {
@@ -219,7 +245,9 @@ export default {
         ? Array.isArray(this.theValue)
           ? this.formatMultiple(this.theValue.map(this.getDisplayOption))
           : this.getDisplayOption(this.theValue)
-        : this.theValue;
+        : !!this.prefix
+          ? this.prefix + ' ' + this.theValue
+          : this.theValue;
     },
     displayOptions() {
       const [firstEl] = this.options;
@@ -261,6 +289,9 @@ export default {
         isEmpty: 'vue-quick-edit__link--is-empty',
         isRequired: 'vue-quick-edit__link--is-required',
         wrapper: 'vue-quick-edit',
+        formGroup: 'vue-quick-edit__form-group',
+        inputIcon: 'vue-quick-edit__input-icon',
+        formControl: 'vue-quick-edit__form-control',
       },
     };
   },
@@ -297,6 +328,12 @@ export default {
       this.inputState = states.display;
       this.$emit(events.close, this.theValue);
       doFocus && this.focus();
+    },
+    autoUpdate() {
+      // Only triggers if the buttons are hidden.
+      if (!this.showButtons) {
+        this.ok();
+      }
     },
     ok(doFocus = true) {
       if (this.validator) {
@@ -341,7 +378,11 @@ export default {
   mounted() {
     // Checks if the defaults need to be replaced by a custom definition in runtime.
     if (typeof window.QUICKEDIT_DEFAULT_CLASSES !== 'undefined') {
-      this.defaultClasses = Object.assign({}, this.defaultClasses, window.QUICKEDIT_DEFAULT_CLASSES);
+      this.defaultClasses = Object.assign(
+        {},
+        this.defaultClasses,
+        window.QUICKEDIT_DEFAULT_CLASSES
+      );
     }
   },
 };
@@ -367,6 +408,7 @@ $quick-edit-height: 32px;
     &--is-clickable {
       border-bottom: 1px dashed $link-color;
       cursor: pointer;
+
       &:hover {
         color: $link-hover-color;
         border-color: $link-hover-color;
@@ -411,6 +453,36 @@ $quick-edit-height: 32px;
       margin-left: 8px;
       background-color: $default-color;
     }
+  }
+
+  &__input-icon {
+    position: relative;
+  }
+
+  &__input-icon > i {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    pointer-events: none;
+    width: 25px;
+    text-align: center;
+    font-style: normal;
+  }
+
+  &__input-icon > input {
+    padding-left: 25px;
+    padding-right: 0;
+  }
+
+  &__input-icon-right > i {
+    right: 0;
+  }
+
+  &__input-icon-right > input {
+    padding-left: 0;
+    padding-right: 25px;
+    text-align: right;
   }
 }
 
