@@ -14,8 +14,8 @@
         @keypress.escape.exact="close"
       >
         <option v-show="$attrs.placeholder" :value="placeholderValue">{{
-          $attrs.placeholder
-        }}</option>
+            $attrs.placeholder
+          }}</option>
         <option
           v-for="option in displayOptions"
           :key="option.value"
@@ -51,7 +51,7 @@
             :tabindex="tabIndex"
             @keypress.enter="ok"
             @keypress.escape.exact="close"
-          >
+          />
         </label>
       </template>
       <datetime
@@ -68,6 +68,22 @@
         @keypress.escape.exact="close"
         format="MM/dd/yyyy"
       />
+      <div v-else-if="!!prefix" :class="classNames.formGroup">
+        <div :class="classNames.inputIcon">
+          <input
+            :class="classNames.formControl"
+            :type="type"
+            v-model="inputValue"
+            v-bind="$attrs"
+            :tabindex="tabIndex"
+            @focusin="handleFocus"
+            @focusout="handleFocus"
+            @keypress.enter="ok"
+            @keypress.escape.exact="close"
+          />
+          <i>{{ prefix }}</i>
+        </div>
+      </div>
       <input
         v-else
         :class="classNames.input"
@@ -144,6 +160,7 @@ const types = mune([
   'url',
   'date',
   'datetime',
+  'time',
 ]);
 const modes = mune(['ok', 'cancel', 'ignore']);
 
@@ -218,6 +235,10 @@ export default {
       type: Function,
       default: values => values.join(', '),
     },
+    prefix: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     isEmpty() {
@@ -245,7 +266,9 @@ export default {
         ? Array.isArray(this.theValue)
           ? this.formatMultiple(this.theValue.map(this.getDisplayOption))
           : this.getDisplayOption(this.theValue)
-        : this.theValue;
+        : !!this.prefix
+          ? this.prefix + ' ' + this.theValue
+          : this.theValue;
     },
     displayOptions() {
       const [firstEl] = this.options;
@@ -254,10 +277,16 @@ export default {
         : this.options;
     },
     displayValue() {
-      if (this.types.boolean === this.type)
+      if (this.types.boolean === this.type) {
         return this.theValue ? this.booleanYesText : this.booleanNoText;
-      else if (this.types.password === this.type) return '•'.repeat(8);
-      return this.isEmpty ? this.emptyText : this.prettyValue;
+      } else if (this.types.password === this.type) {
+        return '•'.repeat(8);
+      } else if (this.types.time === this.type) {
+        const hours = parseInt(this.value.substring(0, 2));
+        return this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}`;
+      } else {
+        return this.isEmpty ? this.emptyText : this.prettyValue;
+      }
     },
     classNames() {
       return Object.assign({}, this.defaultClasses, this.classes);
@@ -287,6 +316,9 @@ export default {
         isEmpty: 'vue-quick-edit__link--is-empty',
         isRequired: 'vue-quick-edit__link--is-required',
         wrapper: 'vue-quick-edit',
+        formGroup: 'vue-quick-edit__form-group',
+        inputIcon: 'vue-quick-edit__input-icon',
+        formControl: 'vue-quick-edit__form-control',
       },
     };
   },
@@ -403,6 +435,7 @@ $quick-edit-height: 32px;
     &--is-clickable {
       border-bottom: 1px dashed $link-color;
       cursor: pointer;
+
       &:hover {
         color: $link-hover-color;
         border-color: $link-hover-color;
@@ -447,6 +480,36 @@ $quick-edit-height: 32px;
       margin-left: 8px;
       background-color: $default-color;
     }
+  }
+
+  &__input-icon {
+    position: relative;
+  }
+
+  &__input-icon > i {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    pointer-events: none;
+    width: 25px;
+    text-align: center;
+    font-style: normal;
+  }
+
+  &__input-icon > input {
+    padding-left: 25px;
+    padding-right: 0;
+  }
+
+  &__input-icon-right > i {
+    right: 0;
+  }
+
+  &__input-icon-right > input {
+    padding-left: 0;
+    padding-right: 25px;
+    text-align: right;
   }
 }
 
