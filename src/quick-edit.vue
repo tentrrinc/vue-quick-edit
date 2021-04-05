@@ -54,6 +54,20 @@
           >
         </label>
       </template>
+      <datetime
+        v-else-if="types.date === type || types.datetime === type"
+        :input-class="classNames.input"
+        :type="type"
+        v-model="inputValue"
+        v-bind="$attrs"
+        :tabindex="tabIndex"
+        @focusin="handleFocus"
+        @focusout="handleFocus"
+        @keyup="autoUpdate"
+        @keypress.enter="ok"
+        @keypress.escape.exact="close"
+        format="MM/dd/yyyy"
+      />
       <input
         v-else
         :class="classNames.input"
@@ -109,6 +123,9 @@
 </template>
 
 <script>
+import { Datetime } from 'vue-datetime';
+import 'vue-datetime/dist/vue-datetime.css';
+
 const mune = keys =>
   keys.reduce((acc, cur) => {
     acc[cur] = cur;
@@ -125,11 +142,14 @@ const types = mune([
   'select',
   'textarea',
   'url',
+  'date',
+  'datetime',
 ]);
 const modes = mune(['ok', 'cancel', 'ignore']);
 
 export default {
   name: 'QuickEdit',
+  components: { Datetime },
   props: {
     buttonOkText: {
       type: String,
