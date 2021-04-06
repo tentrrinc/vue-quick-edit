@@ -118,6 +118,7 @@
         v-model='inputValue'
         @click="handleClick"
         @keypress.enter="handleClick"
+        required
       />
     </template>
     <template v-else>
@@ -454,6 +455,11 @@ $quick-edit-height: 32px;
     border: 1px solid $border-color;
     height: $quick-edit-height;
     padding: 0;
+
+    :disabled {
+      background-color: #ffffff;
+      border: 0;
+    }
   }
 
   &__buttons {
