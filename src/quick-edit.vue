@@ -263,7 +263,7 @@ export default {
         return '•'.repeat(8);
       } else if (this.types.time === this.type) {
         const hours = parseInt(this.value.substring(0, 2));
-        return this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}`;
+        return this.isClient12Hour() ? this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}` : this.theValue;
       } else {
         return this.isEmpty ? this.emptyText : this.prettyValue;
       }
@@ -377,6 +377,9 @@ export default {
     getDisplayOption(opt) {
       const option = this.displayOptions.find(x => x.value === opt);
       return option ? option.text : '';
+    },
+    isClient12Hour() {
+      return !!new Intl.DateTimeFormat(new Date(), { hour: 'numeric' }).format(0).match(/\s/);
     },
   },
   created() {
