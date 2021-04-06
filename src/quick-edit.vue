@@ -104,6 +104,22 @@
         </button>
       </div>
     </template>
+    <template v-else-if='!(isEditing && isEnabled) && types.time === type'>
+      <input
+        disabled
+        :class="{
+          [classNames.link]: true,
+          [classNames.isClickable]: isEnabled,
+          [classNames.isEmpty]: isEmpty,
+          [classNames.isRequired]: isRequired && isEmpty,
+        }"
+        :type='types.time'
+        :tabindex="isEnabled ? tabIndex : false"
+        v-model='inputValue'
+        @click="handleClick"
+        @keypress.enter="handleClick"
+      />
+    </template>
     <template v-else>
       <slot name="prepend"></slot>
       <span
@@ -377,10 +393,7 @@ export default {
     getDisplayOption(opt) {
       const option = this.displayOptions.find(x => x.value === opt);
       return option ? option.text : '';
-    },
-    isClient12Hour() {
-      return !!new Intl.DateTimeFormat(new Date(), { hour: 'numeric' }).format(0).match(/\s/);
-    },
+    }
   },
   created() {
     this.setValue(this.value);
