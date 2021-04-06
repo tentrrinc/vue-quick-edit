@@ -118,6 +118,24 @@
         </button>
       </div>
     </template>
+    <template v-else-if='!(isEditing && isEnabled) && types.time === type'>
+      <input
+        disabled
+        :class="{
+          [classNames.link]: true,
+          [classNames.inputTime]: true,
+          [classNames.isClickable]: isEnabled,
+          [classNames.isEmpty]: isEmpty,
+          [classNames.isRequired]: isRequired && isEmpty,
+        }"
+        :type='types.time'
+        :tabindex="isEnabled ? tabIndex : false"
+        v-model='inputValue'
+        @click="handleClick"
+        @keypress.enter="handleClick"
+        required
+      />
+    </template>
     <template v-else>
       <slot name="prepend"></slot>
       <span
@@ -283,7 +301,7 @@ export default {
         return '•'.repeat(8);
       } else if (this.types.time === this.type) {
         const hours = parseInt(this.value.substring(0, 2));
-        return this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}`;
+        return this.isClient12Hour() ? this.theValue + ' ' + `${hours >= 12 ? 'PM' : 'AM'}` : this.theValue;
       } else {
         return this.isEmpty ? this.emptyText : this.prettyValue;
       }
@@ -311,6 +329,7 @@ export default {
         buttonOk: 'vue-quick-edit__button vue-quick-edit__button--ok',
         buttons: 'vue-quick-edit__buttons',
         input: 'vue-quick-edit__input',
+        inputTime: 'vue-quick-edit__input-time',
         link: 'vue-quick-edit__link',
         isClickable: 'vue-quick-edit__link--is-clickable',
         isEmpty: 'vue-quick-edit__link--is-empty',
@@ -397,7 +416,7 @@ export default {
     getDisplayOption(opt) {
       const option = this.displayOptions.find(x => x.value === opt);
       return option ? option.text : '';
-    },
+    }
   },
   created() {
     this.setValue(this.value);
@@ -458,6 +477,16 @@ $quick-edit-height: 32px;
     border: 1px solid $border-color;
     height: $quick-edit-height;
     padding: 0;
+  }
+
+  &__input-time {
+    color: #333;
+    padding: 0;
+
+    &:disabled {
+      background-color: #ffffff;
+      border: 0;
+    }
   }
 
   &__buttons {
