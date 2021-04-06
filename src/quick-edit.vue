@@ -457,19 +457,13 @@ $quick-edit-height: 32px;
     border: 1px solid $border-color;
     height: $quick-edit-height;
     padding: 0;
-
-    :disabled {
-      background-color: #ffffff;
-      border: 0;
-    }
   }
 
   &__input-time {
     color: #333;
-    height: $quick-edit-height;
     padding: 0;
 
-    :disabled {
+    &:disabled {
       background-color: #ffffff;
       border: 0;
     }
