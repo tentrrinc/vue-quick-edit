@@ -109,6 +109,7 @@
         disabled
         :class="{
           [classNames.link]: true,
+          [classNames.inputTime]: true,
           [classNames.isClickable]: isEnabled,
           [classNames.isEmpty]: isEmpty,
           [classNames.isRequired]: isRequired && isEmpty,
@@ -308,6 +309,7 @@ export default {
         buttonOk: 'vue-quick-edit__button vue-quick-edit__button--ok',
         buttons: 'vue-quick-edit__buttons',
         input: 'vue-quick-edit__input',
+        inputTime: 'vue-quick-edit__input-time',
         link: 'vue-quick-edit__link',
         isClickable: 'vue-quick-edit__link--is-clickable',
         isEmpty: 'vue-quick-edit__link--is-empty',
@@ -453,6 +455,17 @@ $quick-edit-height: 32px;
     background-color: #f9f9f9;
     color: #333;
     border: 1px solid $border-color;
+    height: $quick-edit-height;
+    padding: 0;
+
+    :disabled {
+      background-color: #ffffff;
+      border: 0;
+    }
+  }
+
+  &__input-time {
+    color: #333;
     height: $quick-edit-height;
     padding: 0;
 
