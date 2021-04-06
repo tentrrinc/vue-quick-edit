@@ -65,5 +65,8 @@
     "url": "https://github.com/A1rPun/vue-quick-edit/issues"
   },
   "author": "Thom 'A1rPun' Bakker",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "vue-datetime": "*"
+  }
 }
