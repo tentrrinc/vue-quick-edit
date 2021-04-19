@@ -257,6 +257,14 @@ export default {
       type: String,
       default: '',
     },
+    removeEmojis: {
+      type: Boolean,
+      default: true,
+    },
+    removeHTMLTags: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     isEmpty() {
@@ -382,6 +390,12 @@ export default {
       }
     },
     ok(doFocus = true) {
+      if (this.removeEmojis) {
+        this.inputValue = this.removingEmojis(this.inputValue);
+      }
+      if (this.removeHTMLTags) {
+        this.inputValue = this.removingHTMLTags(this.inputValue);
+      }
       if (this.validator) {
         const error = this.validator(this.inputValue);
         if (error) {
@@ -416,7 +430,36 @@ export default {
     getDisplayOption(opt) {
       const option = this.displayOptions.find(x => x.value === opt);
       return option ? option.text : '';
-    }
+    },
+    removingEmojis(value) {
+      const ranges = [
+        '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+        '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+        '\ud83d[\ude80-\udeff]', // U+1F680 to U+1F6FF
+        '[\u2700-\u27BF]|[\uE000-\uF8FF]',
+        '\uD83C[\uDC00-\uDFFF]',
+        '\uD83D[\uDC00-\uDFFF]',
+        '[\u2011-\u26FF]',
+        '\uD83E[\uDD10-\uDDFF]',
+      ];
+      if (value === null || value === '') {
+        return '';
+      } else {
+        value = value.toString();
+      }
+      return value.replace(new RegExp(ranges.join('|'), 'g'), '');
+    },
+    removingHTMLTags(value) {
+      if (value === null || value === '') {
+        return '';
+      } else {
+        value = value.toString();
+      }
+      // Regular expression to identify HTML tags in
+      // the input string. Replacing the identified
+      // HTML tag with a null string.
+      return value.replace(/(<([^>]+)>)/ig, '');
+    },
   },
   created() {
     this.setValue(this.value);
