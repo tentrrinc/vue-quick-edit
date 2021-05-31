@@ -325,11 +325,6 @@ export default {
     value(value) {
       this.setValue(value);
     },
-    inputValue(value) {
-      if (types.date === this.type || types.datetime === this.type) {
-        this.ok();
-      }
-    },
   },
   data() {
     return {
