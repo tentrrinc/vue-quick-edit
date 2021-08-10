@@ -97,6 +97,12 @@
         @keypress.enter="ok"
         @keypress.escape.exact="close"
       />
+      <!-- If we are using a datalist for the input -->
+      <datalist v-if="!!$attrs['list']" v-bind:id="$attrs['list']">
+        <option v-for="option in displayOptions" :key="option.value" :value="option.value">
+          {{ option.text || option.value }}
+        </option>
+      </datalist>
       <div v-if="showButtons" :class="classNames.buttons">
         <button
           :class="classNames.buttonOk"
