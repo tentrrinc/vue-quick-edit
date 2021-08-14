@@ -325,6 +325,9 @@ export default {
     value(value) {
       this.setValue(value);
     },
+    inputValue(newInputValue) {
+      this.$emit('recent-input', newInputValue);
+    },
   },
   data() {
     return {
