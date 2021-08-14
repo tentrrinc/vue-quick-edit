@@ -145,6 +145,24 @@
       Start open without buttons and ignore outside click.
       <quick-edit start-open :showButtons="false" mode="ignore"></quick-edit>
     </div>
+    <div>
+      <h2>@recent-input event</h2>
+      <p>
+        IMPORTANT: If using @recent-input event make sure you listen to @input and @close (specially
+        with ok/cancel buttons)
+      </p>
+      <quick-edit
+        type="number"
+        @recent-input="fee = $event"
+        @input="fee = $event"
+        @close="fee = $event"
+        mode="ok"
+        :show-buttons="false"
+        placeholder="$"
+        prefix="$"
+      >
+      </quick-edit>
+    </div>
   </div>
 </template>
 
@@ -158,6 +176,7 @@ export default {
   },
   data() {
     return {
+      fee: 0,
       buttonCancelText: 'Cancel',
       buttonOkText: 'Ok',
       booleanYesText: 'Yes',
