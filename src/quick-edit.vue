@@ -326,6 +326,9 @@ export default {
     tabIndex() {
       return this.$attrs.tabindex || 0;
     },
+    inputValue(newInputValue) {
+      this.$emit('recent-input', newInputValue);
+    },
   },
   watch: {
     value(value) {
