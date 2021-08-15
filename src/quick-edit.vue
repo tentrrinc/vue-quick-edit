@@ -71,6 +71,19 @@
       <div v-else-if="!!prefix" :class="classNames.formGroup">
         <div :class="classNames.inputIcon">
           <input
+            v-if="'numeric' === type"
+            :class="classNames.inputNumeric"
+            type="number"
+            v-model="inputValue"
+            v-bind="$attrs"
+            :tabindex="tabIndex"
+            @focusin="handleFocus"
+            @focusout="handleFocus"
+            @keypress.enter="ok"
+            @keypress.escape.exact="close"
+          />
+          <input
+            v-else
             :class="classNames.formControl"
             :type="type"
             v-model="inputValue"
@@ -326,13 +339,13 @@ export default {
     tabIndex() {
       return this.$attrs.tabindex || 0;
     },
-    inputValue(newInputValue) {
-      this.$emit('recent-input', newInputValue);
-    },
   },
   watch: {
     value(value) {
       this.setValue(value);
+    },
+    inputValue(newInputValue) {
+      this.$emit('recent-input', newInputValue);
     },
   },
   data() {
@@ -355,6 +368,7 @@ export default {
         formGroup: 'vue-quick-edit__form-group',
         inputIcon: 'vue-quick-edit__input-icon',
         formControl: 'vue-quick-edit__form-control',
+        inputNumeric: 'vue-quick-edit__input-numeric',
       },
     };
   },
@@ -497,6 +511,19 @@ $default-color: #fff;
 $default-text-color: #333;
 $border-color: #ccc;
 $quick-edit-height: 32px;
+
+/* https://stackoverflow.com/a/67060800/2692914 */
+/* Chrome, Safari, Edge, Opera */
+input.vue-quick-edit__input-numeric::-webkit-outer-spin-button,
+input.vue-quick-edit__input-numeric::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  display: none;
+}
+/* Firefox */>
+input.vue-quick-edit__input-numeric[type=number] {
+  -moz-appearance: textfield;
+}
 
 .vue-quick-edit {
   &__link {
