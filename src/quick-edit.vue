@@ -368,7 +368,7 @@ export default {
         formGroup: 'vue-quick-edit__form-group',
         inputIcon: 'vue-quick-edit__input-icon',
         formControl: 'vue-quick-edit__form-control',
-        inputNumeric: 'vue-quick-edit__input-numeric',
+        inputNumeric: 'vue-quick-edit__input vue-quick-edit__input-numeric',
       },
     };
   },
