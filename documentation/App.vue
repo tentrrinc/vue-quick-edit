@@ -162,15 +162,17 @@
         prefix="$"
       ></quick-edit>
       <quick-edit
-        type="number"
-        @recent-input="fee = $event"
-        @input="fee = $event"
-        @close="fee = $event"
+        type="numeric"
+        :value="feeInt"
+        @recent-input="feeInt = parseInt($event)"
+        @input="feeInt = parseInt($event)"
+        @close="feeInt = parseInt($event)"
         mode="ok"
-        :show-buttons="false"
+        :show-buttons="true"
         placeholder="$"
         prefix="$"
       ></quick-edit>
+      ({{feeInt}})
     </div>
   </div>
 </template>
@@ -185,6 +187,8 @@ export default {
   },
   data() {
     return {
+      fee: 0,
+      feeInt: 0,
       buttonCancelText: 'Cancel',
       buttonOkText: 'Ok',
       booleanYesText: 'Yes',
